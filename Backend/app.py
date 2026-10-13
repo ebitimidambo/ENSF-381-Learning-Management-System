@@ -51,7 +51,7 @@ STUDENTS = {
                   },
     "sajad":     {"ID": 3,
                   "Username":"sajadsarlaki", 
-                  "Password": "Man130$", 
+                  "Password": "Man130$$", 
                   "Email":"", 
                   "Enrolled Courses":[]
                   }
