@@ -16,7 +16,7 @@ pipeline {
                 sh 'npm install'
 
                 echo 'Building React application...'
-                sh 'npm run build'
+                sh 'CI=false npm run build'
             }
         }
     }
