@@ -13,7 +13,7 @@ pipeline {
         stage('Build') {
             steps {
                 echo 'Installing frontend dependencies...'
-                sh 'npm install'
+                sh 'npm ci'
 
                 echo 'Building React application...'
                 sh 'CI=false npm run build'
