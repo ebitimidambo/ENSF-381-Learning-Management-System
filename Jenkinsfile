@@ -9,5 +9,15 @@ pipeline {
                 sh 'ls -la'
             }
         }
+
+        stage('Build') {
+            steps {
+                echo 'Installing frontend dependencies...'
+                sh 'npm install'
+
+                echo 'Building React application...'
+                sh 'npm run build'
+            }
+        }
     }
 }
