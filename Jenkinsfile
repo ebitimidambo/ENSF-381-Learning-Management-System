@@ -83,5 +83,30 @@ pipeline {
                 }
             }
         }
+
+        stage('Ansible Configuration') {
+            steps {
+                echo 'Configuring application server with Ansible...'
+
+                script {
+                    env.DEPLOY_SERVER_IP = sh(
+                        script: 'cd terraform && terraform output -raw public_ip',
+                        returnStdout: true
+                    ).trim()
+                }
+
+                echo "Terraform deployed server at ${env.DEPLOY_SERVER_IP}"
+
+                sshagent(credentials: ['ensf519-ec2-ssh-key']) {
+                    sh '''
+                        ansible-playbook \
+                            -i "${DEPLOY_SERVER_IP}," \
+                            -u ubuntu \
+                            --ssh-common-args="-o StrictHostKeyChecking=no" \
+                            ansible/playbook.yml
+                    '''
+                }
+            }
+        }
     }
 }
