@@ -108,5 +108,26 @@ pipeline {
                 }
             }
         }
+
+        stage('Container Execution') {
+            steps {
+                echo 'Running application container on deployed server...'
+
+                sshagent(credentials: ['ensf519-ec2-ssh-key']) {
+                    sh '''
+                        ssh -o StrictHostKeyChecking=no ubuntu@${DEPLOY_SERVER_IP} "
+                            docker pull ebitimidambo/web-project:latest &&
+                            docker rm -f web-project 2>/dev/null || true
+                            docker run -d \
+                                --name web-project \
+                                --restart unless-stopped \
+                                -p 80:80 \
+                                ebitimidambo/web-project:latest
+                            docker ps
+                        "
+                    '''
+                }
+            }
+        }
     }
 }
