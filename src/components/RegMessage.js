@@ -14,7 +14,7 @@ function ValidateSignup({onHandled}){
         hasRun.current = true;
 
         const checkCredentials = async () => {
-            const backendEndpoint = 'http://127.0.0.1:5000/register';
+            const backendEndpoint = '/api/register';
 
             try {
                 const response = await fetch(backendEndpoint, {

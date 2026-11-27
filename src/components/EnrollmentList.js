@@ -9,7 +9,7 @@ const EnrollmentList = () => {
 
   const loadEnrolledCourses = async () => {
     try {
-      const res = await fetch(`http://127.0.0.1:5000/student_courses/${studentId}`);
+      const res = await fetch(`/api/student_courses/${studentId}`);
       const data = await res.json();
       setEnrolledCourses(data);
     } catch (err) {
@@ -27,7 +27,7 @@ const EnrollmentList = () => {
 
   const handleDrop = async (course) => {
     try {
-      const res = await fetch(`http://127.0.0.1:5000/drop/${studentId}`, {
+      const res = await fetch(`/api/drop/${studentId}`, {
         method: "DELETE",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(course),

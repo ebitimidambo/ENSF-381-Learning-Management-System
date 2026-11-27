@@ -12,7 +12,7 @@ def load_json(filename):
     with open(file_path, "r") as file:
         return json.load(file)
 
-@app.route("/courses", methods = ["GET"])
+@app.route("/api/courses", methods = ["GET"])
 def get_courses():
     data = load_json('data/courses.json')
 
@@ -25,7 +25,7 @@ def get_courses():
     else:
         return jsonify(data)
 
-@app.route("/testimonials", methods = ["GET"])
+@app.route("/api/testimonials", methods = ["GET"])
 def get_testimonials():
     number = request.args.get("number", type=int)
     data = load_json('data/testimonials.json')
@@ -57,7 +57,7 @@ STUDENTS = {
                   }
 }
 
-@app.route("/register", methods = ["POST"])
+@app.route("/api/register", methods = ["POST"])
 def user_signup():
     data = request.json
     username = data.get("username")
@@ -83,7 +83,7 @@ def user_signup():
     else:
         return jsonify({"success": False, "message": "Invalid username or password."}), 401
 
-@app.route("/login", methods = ["POST"])
+@app.route("/api/login", methods = ["POST"])
 def user_login():
     data = request.json
     username = data.get("username")
@@ -101,7 +101,7 @@ def user_login():
     else:
         return jsonify({"success": False, "message": "Invalid username or password."}), 401
     
-@app.route("/student_courses/<student_id>", methods=["GET"])
+@app.route("/api/student_courses/<student_id>", methods=["GET"])
 def get_student_courses(student_id):
     courses = load_json("data/courses.json")
 
@@ -113,7 +113,7 @@ def get_student_courses(student_id):
 
     return jsonify([])
 
-@app.route("/enroll/<student_id>", methods=["POST"])
+@app.route("/api/enroll/<student_id>", methods=["POST"])
 def enroll_course(student_id):
     data = request.json
     course_id = data.get("id")
@@ -129,7 +129,7 @@ def enroll_course(student_id):
     return jsonify({"success": False, "message": "Student not found."}), 404
 
 
-@app.route("/drop/<student_id>", methods=["DELETE"])
+@app.route("/api/drop/<student_id>", methods=["DELETE"])
 def drop_course(student_id):
     data = request.json
     course_id = data.get("id")

@@ -15,7 +15,7 @@ function AuthMessage({onHandled}){
         hasRun.current = true
         
         const checkCredentials = async () => {
-                const backendEndpoint = 'http://127.0.0.1:5000/login';
+                const backendEndpoint = '/api/login';
 
                 try {
                     const response = await fetch(backendEndpoint, {

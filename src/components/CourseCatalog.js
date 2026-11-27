@@ -11,10 +11,10 @@ const CourseCatalog = () => {
 
   const loadCourses = async () => {
     try {
-      const res = await fetch("http://127.0.0.1:5000/courses");
+      const res = await fetch("/api/courses");
       const allCourses = await res.json();
 
-      const enrolledRes = await fetch(`http://127.0.0.1:5000/student_courses/${studentId}`);
+      const enrolledRes = await fetch(`/api/student_courses/${studentId}`);
       const enrolled = await enrolledRes.json();
 
       const notEnrolled = allCourses.filter(
@@ -37,7 +37,7 @@ const CourseCatalog = () => {
 
   const onEnroll = async (course) => {
     try {
-      const res = await fetch(`http://127.0.0.1:5000/enroll/${studentId}`, {
+      const res = await fetch(`/api/enroll/${studentId}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(course),

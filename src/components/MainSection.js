@@ -29,7 +29,7 @@ function MainSection(){
 
     useEffect(() => {
         const getCourses = async (index, setter) => {
-            const backendEndpoint = `http://127.0.0.1:5000/courses?number=${index}`;
+            const backendEndpoint = `/api/courses?number=${index}`;
             try{
                 const response = await fetch(backendEndpoint);
                 const data = await response.json();
@@ -40,7 +40,7 @@ function MainSection(){
         };
 
         const getTestimonials = async (index, setter) => {
-            const backendEndpoint = `http://127.0.0.1:5000/testimonials?number=${index}`;
+            const backendEndpoint = `/api/testimonials?number=${index}`;
             try{
                 const response = await fetch(backendEndpoint);
                 const data = await response.json();

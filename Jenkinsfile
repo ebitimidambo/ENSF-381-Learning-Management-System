@@ -48,12 +48,14 @@ pipeline {
         
         stage('Docker Build & Push') {
             steps {
-                echo 'Building Docker image...'
-        
+                echo 'Building frontend Docker image...'
                 sh 'docker build -t ebitimidambo/web-project:latest .'
-        
-                echo 'Logging in to Docker Hub and pushing image...'
-        
+
+                echo 'Building backend Docker image...'
+                sh 'docker build -t ebitimidambo/web-project-backend:latest ./Backend'
+
+                echo 'Logging in to Docker Hub and pushing images...'
+
                 withCredentials([usernamePassword(
                     credentialsId: 'a43a43ca-fb53-462a-902b-a11cacf2f646',
                     usernameVariable: 'DOCKER_USERNAME',
@@ -61,7 +63,10 @@ pipeline {
                 )]) {
                     sh '''
                         echo "$DOCKER_TOKEN" | docker login -u "$DOCKER_USERNAME" --password-stdin
+
                         docker push ebitimidambo/web-project:latest
+                        docker push ebitimidambo/web-project-backend:latest
+
                         docker logout
                     '''
                 }
@@ -111,20 +116,35 @@ pipeline {
 
         stage('Container Execution') {
             steps {
-                echo 'Running application container on deployed server...'
+                echo 'Running frontend and backend containers on deployed server...'
 
                 sshagent(credentials: ['ensf519-ec2-ssh-key']) {
                     sh '''
-                        ssh -o StrictHostKeyChecking=no ubuntu@${DEPLOY_SERVER_IP} "
-                            docker pull ebitimidambo/web-project:latest &&
-                            docker rm -f web-project 2>/dev/null || true
+                        ssh -o StrictHostKeyChecking=no ubuntu@${DEPLOY_SERVER_IP} '
+                            set -e
+
+                            docker pull ebitimidambo/web-project:latest
+                            docker pull ebitimidambo/web-project-backend:latest
+
+                            docker network inspect lms-network >/dev/null 2>&1 || docker network create lms-network
+
+                            docker rm -f web-project backend 2>/dev/null || true
+
+                            docker run -d \
+                                --name backend \
+                                --restart unless-stopped \
+                                --network lms-network \
+                                ebitimidambo/web-project-backend:latest
+
                             docker run -d \
                                 --name web-project \
                                 --restart unless-stopped \
+                                --network lms-network \
                                 -p 80:80 \
                                 ebitimidambo/web-project:latest
+
                             docker ps
-                        "
+                        '
                     '''
                 }
             }
