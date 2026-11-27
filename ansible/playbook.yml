@@ -1,6 +1,6 @@
 ---
 - name: Configure application server
-  hosts: app_server
+  hosts: all
   become: yes
 
   tasks:
