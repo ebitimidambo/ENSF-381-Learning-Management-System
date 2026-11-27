@@ -22,6 +22,7 @@ pipeline {
                 sh 'CI=false npm run build'
             }
         }
+        
         stage('Automated Testing') {
             steps {
                 echo 'Running Selenium automated tests...'
@@ -42,6 +43,28 @@ pipeline {
         
                     .venv/bin/python selenium_tests/*.py
                 '''
+            }
+        }
+        
+        stage('Docker Build & Push') {
+            steps {
+                echo 'Building Docker image...'
+        
+                sh 'docker build -t ebitimidambo/web-project:latest .'
+        
+                echo 'Logging in to Docker Hub and pushing image...'
+        
+                withCredentials([usernamePassword(
+                    credentialsId: 'dockerhub-credentials',
+                    usernameVariable: 'DOCKER_USERNAME',
+                    passwordVariable: 'DOCKER_TOKEN'
+                )]) {
+                    sh '''
+                        echo "$DOCKER_TOKEN" | docker login -u "$DOCKER_USERNAME" --password-stdin
+                        docker push ebitimidambo/web-project:latest
+                        docker logout
+                    '''
+                }
             }
         }
     }
