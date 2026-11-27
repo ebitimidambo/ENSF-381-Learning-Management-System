@@ -12,6 +12,9 @@ pipeline {
 
         stage('Build') {
             steps {
+                echo 'Cleaning previous build artifacts...'
+                sh 'rm -rf build'
+                
                 echo 'Installing frontend dependencies...'
                 sh 'npm ci'
 
