@@ -49,6 +49,26 @@
           - containernetworking-plugins
         state: present
 
+    - name: Create standard CNI plugin directory
+      file:
+        path: /opt/cni/bin
+        state: directory
+        mode: '0755'
+
+    - name: Find installed CNI plugins
+      find:
+        paths: /usr/lib/cni
+        file_type: file
+      register: cni_plugins
+
+    - name: Link CNI plugins to standard directory
+      file:
+        src: "{{ item.path }}"
+        dest: "/opt/cni/bin/{{ item.path | basename }}"
+        state: link
+        force: yes
+      loop: "{{ cni_plugins.files }}"
+
     - name: Install kubectl
       get_url:
         url: https://dl.k8s.io/release/v1.34.1/bin/linux/amd64/kubectl
