@@ -24,3 +24,22 @@
         name: ubuntu
         groups: docker
         append: yes
+
+    - name: Install required packages for Kubernetes setup
+      apt:
+        name:
+          - curl
+          - conntrack
+        state: present
+
+    - name: Install kubectl
+      get_url:
+        url: https://dl.k8s.io/release/v1.34.1/bin/linux/amd64/kubectl
+        dest: /usr/local/bin/kubectl
+        mode: '0755'
+
+    - name: Install Minikube
+      get_url:
+        url: https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64
+        dest: /usr/local/bin/minikube
+        mode: '0755'
