@@ -25,6 +25,22 @@
         groups: docker
         append: yes
 
+    - name: Create containerd configuration directory
+      file:
+        path: /etc/containerd
+        state: directory
+        mode: '0755'
+
+    - name: Generate default containerd configuration
+      shell: containerd config default > /etc/containerd/config.toml
+      args:
+        creates: /etc/containerd/config.toml
+
+    - name: Restart containerd
+      service:
+        name: containerd
+        state: restarted
+
     - name: Install required packages for Kubernetes setup
       apt:
         name:
@@ -32,27 +48,6 @@
           - conntrack
           - containernetworking-plugins
         state: present
-
-    - name: Create standard CNI plugin directory
-      file:
-        path: /opt/cni/bin
-        state: directory
-        mode: '0755'
-
-    - name: Create standard CNI plugin directory
-      file:
-        path: /opt/cni/bin
-        state: directory
-        mode: '0755'
-
-    - name: Link CNI plugins to standard directory
-      file:
-        src: "{{ item }}"
-        dest: "/opt/cni/bin/{{ item | basename }}"
-        state: link
-        force: yes
-      with_fileglob:
-        - /usr/lib/cni/*
 
     - name: Install kubectl
       get_url:
