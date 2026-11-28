@@ -30,6 +30,7 @@
         name:
           - curl
           - conntrack
+          - containernetworking-plugins
         state: present
 
     - name: Install kubectl
