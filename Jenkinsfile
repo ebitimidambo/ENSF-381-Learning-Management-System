@@ -171,6 +171,9 @@ pipeline {
                             sudo kubectl apply -f /home/ubuntu/frontend-deployment.yml
                             sudo kubectl apply -f /home/ubuntu/frontend-service.yml
 
+                            sudo kubectl rollout restart deployment/backend
+                            sudo kubectl rollout restart deployment/frontend
+
                             sudo kubectl rollout status deployment/backend --timeout=120s
                             sudo kubectl rollout status deployment/frontend --timeout=120s
 
