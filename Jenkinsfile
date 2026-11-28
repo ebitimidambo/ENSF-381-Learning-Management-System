@@ -149,5 +149,43 @@ pipeline {
                 }
             }
         }
+
+        stage('Kubernetes Orchestration') {
+            steps {
+                echo 'Deploying application with Kubernetes...'
+
+                sshagent(credentials: ['ensf519-ec2-ssh-key']) {
+                    sh '''
+                        scp -o StrictHostKeyChecking=no \
+                            kubernetes/*.yml \
+                            ubuntu@${DEPLOY_SERVER_IP}:/home/ubuntu/
+
+                        ssh -o StrictHostKeyChecking=no ubuntu@${DEPLOY_SERVER_IP} '
+                            set -e
+
+                            sudo minikube status || \
+                            sudo minikube start --driver=none --force
+
+                            sudo kubectl apply -f /home/ubuntu/backend-deployment.yml
+                            sudo kubectl apply -f /home/ubuntu/backend-service.yml
+                            sudo kubectl apply -f /home/ubuntu/frontend-deployment.yml
+                            sudo kubectl apply -f /home/ubuntu/frontend-service.yml
+
+                            sudo kubectl rollout status deployment/backend --timeout=120s
+                            sudo kubectl rollout status deployment/frontend --timeout=120s
+
+                            echo "Kubernetes deployments:"
+                            sudo kubectl get deployments
+
+                            echo "Kubernetes pods:"
+                            sudo kubectl get pods
+
+                            echo "Kubernetes services:"
+                            sudo kubectl get services
+                        '
+                    '''
+                }
+            }
+        }
     }
 }
